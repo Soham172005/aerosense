@@ -143,26 +143,37 @@ class Product(models.Model):
     PRODUCT_TYPES = [
         ("mask", "Mask"),
         ("purifier", "Air Purifier"),
-        ("health", "Health Supplement"),
+        ("monitor", "Air Quality Monitor"),
+        ("car-filter", "Car Filter"),
+        ("plant", "Plant"),
     ]
 
     name = models.CharField(max_length=256)
     product_type = models.CharField(max_length=32, choices=PRODUCT_TYPES)
+    description = models.TextField(blank=True)
     price = models.FloatField(null=True, blank=True)
-    image_url = models.URLField(null=True, blank=True)
-    product_url = models.URLField(null=True, blank=True)
 
-    min_aqi = models.IntegerField(default=50)
-    max_aqi = models.IntegerField(default=500)
+    image_url = models.URLField(blank=True, null=True)
+    product_url = models.URLField(blank=True, null=True)
 
+    aqi_min = models.IntegerField(default=0)
+    aqi_max = models.IntegerField(default=500)
+
+    effectiveness = models.IntegerField(default=0)
     rating = models.FloatField(null=True, blank=True)
+    reviews = models.IntegerField(null=True, blank=True)
+
+    features = models.JSONField(default=list, blank=True)
+    recommended_for = models.JSONField(default=list, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["product_type"]
+        ordering = ["product_type", "-effectiveness"]
 
     def __str__(self):
         return self.name
-
 
 # ----------------------------------------------------------
 # 7. AI-SUMMARIZED NEWS MODEL
@@ -232,37 +243,3 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-class Product(models.Model):
-    PRODUCT_TYPES = [
-        ("mask", "Mask"),
-        ("purifier", "Air Purifier"),
-        ("monitor", "Air Quality Monitor"),
-        ("car-filter", "Car Filter"),
-        ("plant", "Plant"),
-    ]
-
-    name = models.CharField(max_length=256)
-    product_type = models.CharField(max_length=32, choices=PRODUCT_TYPES)
-    description = models.TextField(blank=True)
-    price = models.FloatField(null=True, blank=True)
-    image_url = models.URLField(blank=True, null=True)
-    product_url = models.URLField(blank=True, null=True)
-
-    # inclusive aqiRange stored as "min-max" or "All"
-    aqi_min = models.IntegerField(default=0)
-    aqi_max = models.IntegerField(default=500)
-
-    effectiveness = models.IntegerField(default=0)   # 0-100
-    rating = models.FloatField(null=True, blank=True)
-    reviews = models.IntegerField(null=True, blank=True)
-    features = models.JSONField(default=list, blank=True)  # list of strings
-    recommended_for = models.JSONField(default=list, blank=True)  # list of strings
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["product_type", "-effectiveness"]
-
-    def __str__(self):
-        return self.name

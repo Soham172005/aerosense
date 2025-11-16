@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Product Recommender</title>
+    <link rel="stylesheet" href="{% static 'aqi_app/css/products.css' %}">
+</head>
+
+<body>
+
+{% include 'home_sections/navbar.html' %}
+
+<div class="container">
+    <h1 class="title">Smart Product Recommender</h1>
+
+    <form method="GET">
+        <select name="city" class="city-select" onchange="this.form.submit()">
+            <option value="">Select a City</option>
+                {% for c in cities %}
+                <option value="{{ c.name }}">{{ c.name }}, {{ c.state }}</option>
+                            
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if aqi_value %}
+        <div class="aqi-box">
+            Current AQI: <b>{{ aqi_value }}</b>
+        </div>
+
+        <h2 class="subtitle">Recommended Products</h2>
+
+        <div class="products-grid">
+            {% for product in recommendations %}
+                <div class="product-card">
+
+                    {% if product.image_url %}
+                        <img src="{{ product.image_url }}" class="product-img">
+                    {% endif %}
+
+                    <h3>{{ product.name }}</h3>
+
+                    <p class="desc">{{ product.description }}</p>
+
+                    <div class="effectiveness">
+                        Effectiveness: <b>{{ product.effectiveness }}%</b>
+                    </div>
+
+                    <div class="price">₹{{ product.price }}</div>
+
+                    {% if product.product_url %}
+                        <a href="{{ product.product_url }}" target="_blank" class="buy-btn">Buy Now</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<section class="hero">
+    <h1>Smart Product <span>Recommender</span></h1>
+    <p>Personalized product suggestions based on your local air quality.</p>
+</section>
+
+<section class="products-container">
+
+    <!-- Category Tabs -->
+    <div class="tabs">
+        <button class="tab active" data-category="all">All</button>
+        <button class="tab" data-category="purifier">Purifiers</button>
+        <button class="tab" data-category="mask">Masks</button>
+        <button class="tab" data-category="monitor">Monitors</button>
+        <button class="tab" data-category="car-filter">Car Filters</button>
+        <button class="tab" data-category="plant">Plants</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productGrid" class="product-grid"></div>
+
+</section>
+
+{% include 'home_sections/footer.html' %}
+
+<!-- JavaScript to fetch products -->
+<script>
+    let allProducts = [];
+
+    async function loadProducts() {
+        try {
+            const response = await fetch("/products/");
+            allProducts = await response.json();
+            displayProducts(allProducts);
+        } catch (error) {
+            console.error("Error loading products:", error);
+        }
+    }
+
+    function displayProducts(list) {
+        const grid = document.getElementById("productGrid");
+        grid.innerHTML = "";
+
+        list.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <h3>${p.name}</h3>
+                    <p class="price">$${p.price}</p>
+                    <p class="desc">${p.description}</p>
+
+                    <div class="rating">
+                        ⭐ ${p.rating} (${p.reviews} reviews)
+                    </div>
+
+                    <div class="features">
+                        ${p.features.slice(0,3).map(f => `<span>${f}</span>`).join("")}
+                    </div>
+
+                    <button class="btn">Add to Cart</button>
+                </div>
+            `;
+        });
+    }
+
+    // CATEGORY FILTER
+    document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelector(".tab.active").classList.remove("active");
+            tab.classList.add("active");
+
+            const category = tab.dataset.category;
+
+            if (category === "all") {
+                displayProducts(allProducts);
+            } else {
+                displayProducts(allProducts.filter(p => p.product_type === category));
+            }
+        });
+    });
+
+    loadProducts();
+</script>
+
+</body>
+</html>

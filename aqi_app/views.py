@@ -11,6 +11,75 @@ from datetime import datetime, timedelta
 import json
 import re
 from aqi_app.models import NewsArticle
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Product
+from .serializers import ProductSerializer
+from rest_framework import viewsets
+from rest_framework.response import Response
+from django.shortcuts import render
+from .models import Product, City, AQIReading
+from .serializers import ProductSerializer
+
+# ---------------- PRODUCT API ----------------
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+# ---------------- HTML PAGE ----------------
+def products_page(request):
+    cities = City.objects.all()
+    selected_city = request.GET.get("city")
+
+    aqi_value = None
+    recommendations = []
+
+    if selected_city:
+        latest = AQIReading.objects.filter(city_id=selected_city).order_by("-timestamp").first()
+
+        if latest:
+            aqi_value = latest.aqi
+
+            recommendations = Product.objects.filter(
+                aqi_min__lte=aqi_value,
+                aqi_max__gte=aqi_value
+            ).order_by("-effectiveness")
+
+    return render(request, "products.html", {
+        "cities": cities,
+        "aqi_value": aqi_value,
+        "recommendations": recommendations
+    })
+
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+@api_view(['GET'])
+def product_recommendations(request):
+    aqi = int(request.GET.get("aqi", 0))
+
+    # basic filtering logic
+    recommended = []
+    products = Product.objects.all()
+
+    for p in products:
+        # aqiRange = "100-200" OR "150+"
+        if "+" in p.aqiRange:
+            if aqi >= int(p.aqiRange.replace("+", "")):
+                recommended.append(p)
+        elif "-" in p.aqiRange:
+            low, high = map(int, p.aqiRange.split("-"))
+            if low <= aqi <= high:
+                recommended.append(p)
+        else:
+            recommended.append(p)
+
+    serializer = ProductSerializer(recommended, many=True)
+    return Response(serializer.data)
 
 def categorize_news(article):
     text = f"{article.title} {article.summary}".lower()
@@ -243,3 +312,10 @@ def trends_view(request):
     return render(request, "aqi_app/trends.html", context)
 
 
+def products_page(request):
+    cities = City.objects.all().order_by("name")
+
+    context = {
+        "cities": cities,
+    }
+    return render(request, 'aqi_app/products.html', context)
