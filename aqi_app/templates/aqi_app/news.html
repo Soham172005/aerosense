@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI News Feed</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'aqi_app/css/news.css' %}">
+    <link rel="stylesheet" href="{% static 'home_sections/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'home_sections/footer.css' %}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    {% include 'home_sections/navbar.html' %}
+
+    <!-- HERO -->
+    <section class="news-hero">
+        <div class="container">
+            <span class="badge">AI-Enhanced News Feed</span>
+            <h1 class="title">Air Quality <span class="highlight">News</span></h1>
+            <p class="subtitle">Stay informed with AI-curated environmental news, research updates, and policy changes relevant to air quality and public health.</p>
+        </div>
+    </section>
+
+    <!-- FILTERS -->
+    <section class="news-filters container">
+        <form method="get" class="filters-form">
+            
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search news..." 
+                value="{{ search }}"
+                class="search-box">
+
+            <select name="category" class="category-select">
+                <option value="all" {% if category == 'all' %}selected{% endif %}>All</option>
+                <option value="breaking" {% if category == 'breaking' %}selected{% endif %}>Breaking</option>
+                <option value="research" {% if category == 'research' %}selected{% endif %}>Research</option>
+                <option value="policy" {% if category == 'policy' %}selected{% endif %}>Policy</option>
+                <option value="health" {% if category == 'health' %}selected{% endif %}>Health</option>
+                <option value="technology" {% if category == 'technology' %}selected{% endif %}>Technology</option>
+            </select>
+
+            <button class="btn">Filter</button>
+        </form>
+    </section>
+
+    <!-- NEWS LIST -->
+    <section class="news-list container">
+
+        {% for a in articles %}
+        <div class="news-card">
+            <div class="card-header">
+                <span class="category">{{ a.source }}</span>
+                <span class="date">{{ a.published_at|date:"M d, Y" }}</span>
+            </div>
+
+            <h3 class="news-title">{{ a.title }}</h3>
+
+            <p class="summary">{{ a.summary|truncatechars:240 }}</p>
+
+            <div class="footer">
+                <span class="source">Source: {{ a.source }}</span>
+                <a href="{{ a.url }}" target="_blank" class="read-more">
+                    Read Full Article →
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not articles %}
+        <p class="no-results">No news found.</p>
+        {% endif %}
+
+    </section>
+
+    <!-- FOOTER -->
+    {% include 'home_sections/footer.html' %}
+
+</body>
+</html>

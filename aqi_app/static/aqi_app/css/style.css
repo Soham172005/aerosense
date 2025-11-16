@@ -1,0 +1,93 @@
+/* badge helpers (classes used in view output) */
+.bg-green-100 { background-color: #DCFCE7; color: #065F46; }
+.text-green-800 { color: #065F46; }
+.bg-yellow-100 { background-color: #FEF3C7; color: #92400E; }
+.text-yellow-800 { color: #92400E; }
+.bg-orange-100 { background-color: #FFF7ED; color: #92400E; } /* orange-ish */
+.text-orange-800 { color: #92400E; }
+.bg-red-100 { background-color: #FEE2E2; color: #9F1239; }
+.text-red-800 { color: #9F1239; }
+.bg-purple-100 { background-color: #F3E8FF; color: #5B21B6; }
+.text-purple-800 { color: #5B21B6; }
+.bg-stone-800 { background-color: #1F2937; color: #fff; }
+
+
+/* SECTION: Live AQI Grid */
+.aqi-grid {
+    width: 90%;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* AQI card layout */
+.aqi-card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.aqi-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Header */
+.aqi-card-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.live-dot {
+    color: #3ddc3d;
+    font-weight: bold;
+}
+
+/* AQI value */
+.aqi-value {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+/* Category pill */
+.aqi-category {
+    font-size: 14px;
+    padding: 5px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* Category Colors */
+.aqi-category.good { background: #d6f5d6; color: #2e8b57; }
+.aqi-category.moderate { background: #fff0b3; color: #a67c00; }
+.aqi-category.unhealthy { background: #ffcccc; color: #cc0000; }
+.aqi-category.unhealthy-for-sensitive-groups { background: #ffd9b3; color: #cc7a00; }
+.aqi-category.very-unhealthy { background: #e0b3ff; color: #6600cc; }
+.aqi-category.hazardous { background: #ffb3b3; color: #800000; }
+
+/* Text blocks */
+.aqi-pollutant {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.aqi-advice {
+    font-size: 13px;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.aqi-updated {
+    font-size: 12px;
+    color: #777;
+}
+

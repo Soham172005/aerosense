@@ -1,0 +1,176 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AeroSense – Live Air Quality</title>
+    <link rel="stylesheet" href="{% static 'aqi_app/css/homepage.css' %}">
+</head>
+
+<body class="fade-page">
+
+<!-- NAVBAR -->
+{% include 'home_sections/navbar.html' %}
+
+<!-- HERO SECTION -->
+<section class="hero-section fade-slide-up">
+    <div class="hero-grid">
+
+        <!-- LEFT TEXT -->
+        <div class="hero-left fade-slide-up">
+            <span class="badge">Real-Time Monitoring</span>
+
+            <h1 class="hero-title">
+                Breathe Informed with <br>
+                <span class="highlight">Live Air Quality</span> Data
+            </h1>
+
+            <p class="hero-desc">
+                Monitor real-time AQI levels from locations across India. 
+                Stay informed with accurate air quality updates, health recommendations, 
+                and environmental insights.
+            </p>
+
+            {% if selected_city %}
+            <div class="aqi-card fade-slide-up stagger-1">
+                <div class="aqi-top">
+                    <div class="loc">
+                        <img src="{% static 'aqi_app/icons/pin.svg' %}" class="icon-sm">
+                        <span>{{ selected_city.city.name }}</span>
+                    </div>
+
+                    <div class="aqi-chip aqi-{{ selected_city.category|lower }}">
+                        {{ selected_city.category }}
+                    </div>
+                </div>
+
+                <div class="aqi-values">
+                    <div class="aqi-value">
+                        <h2>{{ selected_city.aqi }}</h2>
+                        <p>AQI</p>
+                    </div>
+
+                    <div class="aqi-value">
+                        <h3>{{ selected_city.primary_pollutant }}</h3>
+                        <p>Primary Pollutant</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="hero-buttons fade-slide-up stagger-2">
+                <a href="/live-monitoring/" class="btn-purple">Explore Locations</a>
+                <a href="/trends/" class="btn-outline">View Trends</a>
+            </div>
+        </div>
+
+        <!-- RIGHT IMAGE -->
+        <div class="hero-right fade-zoom stagger-3">
+            <div class="img-card zoom-container">
+                <img src="https://static.wixstatic.com/media/46caee_b1da73fc07db44fb80ad606c486eafbd~mv2.png"
+                     class="hero-img zoom-in">
+
+                <div class="live-tag">
+                    <span class="live-dot"></span> Live Data
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section fade-slide-up">
+    <h2 class="section-title">Comprehensive Air Quality Monitoring</h2>
+    <p class="section-desc">Advanced tracking with insights, real-time updates and analytics.</p>
+
+    <div class="features-grid">
+
+        <div class="feature-card fade-slide-up stagger-1">
+            <div class="feature-icon purple-bg">📡</div>
+            <h3>Real-Time Tracking</h3>
+            <p>Monitor air quality levels across multiple locations with up-to-date values.</p>
+        </div>
+
+        <div class="feature-card fade-slide-up stagger-2">
+            <div class="feature-icon yellow-bg">🛡️</div>
+            <h3>Health Insights</h3>
+            <p>Get personalized recommendations based on pollution levels.</p>
+        </div>
+
+        <div class="feature-card fade-slide-up stagger-3">
+            <div class="feature-icon purple-bg">📈</div>
+            <h3>Trend Analysis</h3>
+            <p>Analyze data patterns and forecast future air quality levels.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- LIVE LOCATIONS SECTION -->
+<section class="live-section fade-slide-up">
+    <h2 class="section-title">Live Air Quality Data</h2>
+    <p class="section-desc">Current AQI readings from stations across India</p>
+
+    <div class="cards-grid">
+
+        {% for item in aqi_data %}
+        <div class="city-card fade-slide-up stagger-card">
+            <div class="city-top">
+                <div class="loc">
+                    <img src="{% static 'aqi_app/icons/pin.svg' %}" class="icon-sm">
+                    <span>{{ item.city.name }}</span>
+                </div>
+
+                <span class="aqi-chip aqi-{{ item.category|lower }}">
+                    {{ item.category }}
+                </span>
+            </div>
+
+            <div class="city-info">
+                <div class="ci-row">
+                    <span>AQI Value</span>
+                    <strong>{{ item.aqi }}</strong>
+                </div>
+
+                <div class="ci-row">
+                    <span>Primary Pollutant</span>
+                    <strong>{{ item.primary_pollutant }}</strong>
+                </div>
+
+                <div class="ci-row">
+                    <span>Last Updated</span>
+                    <small>{{ item.last_updated|date:"M d, Y H:i" }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+{% include 'home_sections/footer.html' %}
+
+<!-- ANIMATION JS -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // Basic fade-slide-up
+    const fadeItems = document.querySelectorAll(".fade-slide-up");
+    fadeItems.forEach((el, i) => {
+        setTimeout(() => el.classList.add("show"), 150 + i * 120);
+    });
+
+    // Staggered cards animation
+    const staggerCards = document.querySelectorAll(".stagger-card");
+    staggerCards.forEach((el, i) => {
+        setTimeout(() => el.classList.add("show"), 300 + i * 120);
+    });
+
+});
+</script>
+
+</body>
+</html>

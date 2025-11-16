@@ -1,0 +1,199 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Historical Trend Analysis</title>
+    <link rel="stylesheet" href="{% static 'aqi_app/css/trends.css' %}">
+</head>
+
+<body>
+
+    {% include 'home_sections/navbar.html' %}
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="icon">📊</span>
+                Historical Analysis
+            </div>
+
+            <h1 class="hero-title">
+                Historical <span class="highlight">Trend Analysis</span>
+            </h1>
+
+            <p class="hero-desc">
+                Analyze air quality patterns over time to understand trends, seasonal variations, 
+                and long-term changes in your area.
+            </p>
+        </div>
+    </section>
+
+    <!-- FILTER CARD -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-card">
+                <h3 class="filter-title">Analysis Settings</h3>
+
+                <div class="filters-grid">
+
+                    <div class="filter-block">
+                        <label>Location</label>
+                        <select id="city-select">
+                            {% for c in cities %}
+                                <option value="{{ c.name }}">{{ c.name }}, {{ c.state }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-block">
+                        <label>Time Range</label>
+                        <select id="time-range">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 3 Months</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS GRID -->
+    <section class="stats-section">
+        <div class="container stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-value" id="avg-aqi">--</div>
+                <div class="stat-label">Average AQI</div>
+                <div class="stat-chip good" id="avg-chip">Good</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value red" id="max-aqi">--</div>
+                <div class="stat-label">Peak AQI</div>
+                <div class="stat-small">Highest recorded</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value green" id="min-aqi">--</div>
+                <div class="stat-label">Best AQI</div>
+                <div class="stat-small">Lowest recorded</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="trend-icon" id="trend-icon">📈</div>
+                <div class="stat-label">Trend</div>
+                <div class="stat-small" id="trend-text">Stable</div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- TAB SECTION -->
+    <section class="tabs-section">
+        <div class="container">
+
+            <div class="tabs">
+                <button class="tab active" data-tab="timeline">Timeline</button>
+                <button class="tab" data-tab="patterns">Patterns</button>
+                <button class="tab" data-tab="insights">Insights</button>
+            </div>
+
+            <!-- TIMELINE TAB -->
+            <div class="tab-content active" id="timeline">
+                <div class="timeline-list" id="timeline-data">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- PATTERNS TAB -->
+            <div class="tab-content" id="patterns">
+
+                <div class="pattern-grid">
+
+                    <div class="pattern-card">
+                        <h3>Weekly Patterns</h3>
+                        <div class="pattern-list" id="weekly-patterns"></div>
+                    </div>
+
+                    <div class="pattern-card">
+                        <h3>Hourly Patterns</h3>
+                        <div class="pattern-list" id="hourly-patterns"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INSIGHTS TAB -->
+            <div class="tab-content" id="insights">
+                <div class="insight-card">
+                    <h3>Trend Analysis</h3>
+                    <p id="trend-analysis-text">Loading...</p>
+                </div>
+
+                <div class="insight-card yellow">
+                    <h3>Peak Pollution Times</h3>
+                    <p>
+                        Highest pollution levels typically occur between 12 PM – 6 PM due to increased
+                        traffic and industrial activity.
+                    </p>
+                </div>
+
+                <div class="insight-card">
+                    <h3>Seasonal Variations</h3>
+                    <p>
+                        Air quality tends to improve during weekends and holidays due to reduced
+                        industrial activity.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="container">
+            <h2 class="features-title">Advanced Trend Analysis</h2>
+
+            <div class="features-grid">
+
+                <div class="feature-card">
+                    <div class="feature-icon purple">📊</div>
+                    <div>
+                        <h4>Historical Data</h4>
+                        <p>Comprehensive AQI analysis over long periods.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon yellow">📈</div>
+                    <div>
+                        <h4>Predictive Insights</h4>
+                        <p>AI-powered forecasting for future air quality.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon purple">📅</div>
+                    <div>
+                        <h4>Custom Timeframes</h4>
+                        <p>Analyze different time periods from days to months.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {% include 'home_sections/footer.html' %}
+
+    <script src="{% static 'aqi_app/js/trends.js' %}"></script>
+
+</body>
+</html>

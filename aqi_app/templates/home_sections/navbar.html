@@ -1,0 +1,30 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'aqi_app/css/homepage.css' %}">
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <!-- LOGO -->
+        <a href="/" class="logo">AeroSense</a>
+
+        <!-- NAV LINKS -->
+        <nav class="nav-links">
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+            <a href="/live-monitoring/" class="{% if '/live-monitoring' in request.path %}active{% endif %}">Live Monitoring</a>
+            <a href="/forecasting/" class="{% if '/forecasting' in request.path %}active{% endif %}">Forecasting</a>
+            <a href="/health/" class="{% if '/health' in request.path %}active{% endif %}">Health Advisor</a>
+            <a href="/trends/" class="{% if '/trends' in request.path %}active{% endif %}">Trends</a>
+            <a href="/news/" class="{% if '/news' in request.path %}active{% endif %}">News</a>
+            <a href="/products/" class="{% if '/products' in request.path %}active{% endif %}">Products</a>
+            <a href="/travel/" class="{% if '/travel' in request.path %}active{% endif %}">Travel</a>
+        </nav>
+
+        <!-- RIGHT BUTTONS -->
+        <div class="nav-buttons">
+            <a href="/alerts/" class="btn-light">Get Alerts</a>
+            <a href="/map/" class="btn-dark">View Map</a>
+        </div>
+
+    </div>
+</header>

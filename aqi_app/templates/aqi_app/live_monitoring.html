@@ -1,0 +1,146 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AeroSense – Live AQI Monitoring</title>
+    <link rel="stylesheet" href="{% static 'aqi_app/css/live_monitoring.css' %}">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+{% include 'home_sections/navbar.html' %}
+
+<section class="hero-section">
+    <div class="container">
+
+        <div class="hero-badge">
+            <span class="dot"></span> Live Data Stream
+        </div>
+
+        <h1 class="hero-title">
+            Live AQI <span class="highlight">Monitoring</span>
+        </h1>
+
+        <p class="hero-desc">
+            Real-time air quality monitoring across multiple locations with instant updates and health alerts.
+        </p>
+
+        <div class="refresh-row">
+            <span>Last updated: {{ last_refresh|date:"g:i A" }}</span>
+            <button class="refresh-btn" onclick="window.location.reload()">⟳ Refresh</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ============================= -->
+<!-- LIVE AQI CARDS (9 CITIES)     -->
+<!-- ============================= -->
+
+<section class="cards-section">
+    <div class="container cards-grid">
+
+        {% for item in live_data %}
+        <div class="aqi-card">
+            <div class="card-header">
+                <div class="location">
+                    <img src="" class="icon-sm" alt="location">
+                    <span>{{ item.city }}</span>
+                </div>
+
+                <div class="live-dot"></div>
+                <span class="live-text">Live</span>
+            </div>
+
+            <div class="card-body">
+
+                <div class="aqi-value">{{ item.aqi }}</div>
+
+                <div class="aqi-chip {{ item.category|lower|cut:' ' }}">
+                    {{ item.category }}
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Primary Pollutant</span>
+                    <span class="value">{{ item.primary_pollutant }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Category</span>
+                    <span class="value">{{ item.category }}</span>
+                </div>
+
+                <div class="health-box">
+                    {% if item.category == "Good" %}
+                        Air quality is satisfactory for most people.
+                    {% elif item.category == "Moderate" %}
+                        Sensitive individuals should consider limiting outdoor activities.
+                    {% elif item.category == "Unhealthy for Sensitive Groups" %}
+                        Sensitive groups should avoid outdoor activities.
+                    {% elif item.category == "Unhealthy" %}
+                        Everyone should limit outdoor activities.
+                    {% elif item.category == "Very Unhealthy" %}
+                        Everyone should avoid outdoor activities.
+                    {% else %}
+                        Health alert: everyone should avoid all outdoor activities.
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+
+
+<!-- =================== -->
+<!-- FEATURES SECTION    -->
+<!-- =================== -->
+
+<section class="features-section">
+    <div class="container">
+
+        <h2 class="features-title">Live Monitoring Features</h2>
+
+        <div class="features-grid">
+
+            <div class="feature-card">
+                <div class="icon-wrap light-purple">
+                    ⚡
+                </div>
+                <h3>Real-Time Updates</h3>
+                <p>Data refreshes every 5 minutes from verified monitoring stations.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-wrap yellow">
+                    ⚠️
+                </div>
+                <h3>Instant Alerts</h3>
+                <p>Immediate notifications when air quality changes significantly.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-wrap light-purple">
+                    📍
+                </div>
+                <h3>Multi-Location</h3>
+                <p>Monitor multiple locations simultaneously with live data streams.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+{% include 'home_sections/footer.html' %}
+
+</body>
+</html>

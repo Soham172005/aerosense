@@ -1,0 +1,13 @@
+django>=5.0
+djangorestframework>=3.16
+requests>=2.32
+beautifulsoup4>=4.12
+lxml>=5.3
+numpy>=1.26
+pandas>=2.2
+scikit-learn>=1.4
+joblib>=1.4
+statsmodels>=0.14
+celery>=5.4
+redis>=5.0
+python-dateutil>=2.9

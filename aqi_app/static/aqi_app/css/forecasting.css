@@ -1,0 +1,185 @@
+/* GENERAL */
+body {
+    font-family: Inter, sans-serif;
+    margin: 0;
+    background: #fbfaff;
+    color: #2b2b2b;
+}
+
+/* HERO */
+.forecast-hero {
+    text-align: center;
+    padding: 60px 0 40px;
+}
+
+.badge {
+    display: inline-block;
+    background: #fff3b3;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.highlight {
+    color: #6a38ff;
+}
+
+/* SEARCH BAR */
+.search-section {
+    width: 600px;
+    max-width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+#citySearch {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 18px;
+    border: 2px solid #dad2ff;
+    border-radius: 12px;
+    outline: none;
+}
+
+#citySearch:focus {
+    border-color: #6a38ff;
+}
+
+.suggestions-box {
+    margin-top: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background: #f2ecff;
+}
+
+/* SELECTED CITY CARD */
+.selected-section {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.selected-card {
+    background: white;
+    width: 350px;
+    padding: 20px;
+    margin: auto;
+    border-radius: 18px;
+    border: 1px solid rgba(106,56,255,0.2);
+}
+
+.aqi-box {
+    background: #eee;
+    margin: 20px auto;
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.timestamp {
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+/* FORECAST GRID */
+.forecast-grid {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.grid-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+}
+
+.grid-item {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(106,56,255,0.15);
+}
+
+.time {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 6px 0;
+}
+
+/* AQI COLORS */
+.aqi-good { background: #4caf50; color:white; border-radius:10px; padding:4px; }
+.aqi-moderate { background: #ffb300; color:white; border-radius:10px; padding:4px; }
+.aqi-sensitive {
+    background: #ff9800;
+    color: white;
+    border-radius: 10px;
+    padding: 4px 6px;
+    white-space: nowrap;
+}
+.aqi-unhealthy { background: #ff5722; color:white; border-radius:10px; padding:4px; }
+.aqi-very-unhealthy { background: #8e24aa; color:white; border-radius:10px; padding:4px; }
+.aqi-hazardous { background: #6a1b9a; color:white; border-radius:10px; padding:4px; }
+
+/* Badge fix for long category text */
+/* ------------------------------
+   FIX: Forecast card height + label wrapping
+--------------------------------*/
+
+.label {
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    max-width: 100%;
+    text-align: center;
+
+    white-space: normal;         
+    line-height: 1.2;
+    display: inline-block;
+
+    overflow-wrap: break-word;
+}
+
+/* card container fix */
+.forecast-card {
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.09);
+    background: #fff;
+
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    text-align: center;
+}
+
+/* grid fix */
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: auto;
+}
+

@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AeroSense – Forecasting</title>
+    <link rel="stylesheet" href="{% static 'aqi_app/css/forecasting.css' %}">
+</head>
+
+<body>
+
+<!-- HEADER (same navbar as homepage) -->
+{% include 'home_sections/navbar.html' %}
+
+<section class="forecast-hero">
+    <span class="badge">24-Hour Predictions</span>
+    <h1>Air Quality <span class="highlight">Forecasting</span></h1>
+    <p>Advanced 24-hour AQI predictions using weather patterns and ML-powered data.</p>
+</section>
+
+<!-- SEARCH BAR -->
+<section class="search-section">
+
+    <h3>Select a City</h3>
+    <input id="citySearch" type="text" placeholder="Search city..."
+           autocomplete="off" oninput="showSuggestions(this.value)">
+
+    <div id="suggestions" class="suggestions-box"></div>
+
+</section>
+
+<!-- FORECAST DATA -->
+{% if selected_data %}
+<section class="selected-section">
+
+    <div class="selected-card">
+        <h2>{{ selected_city }}</h2>
+
+        <div class="aqi-box {{ selected_data.aqi|floatformat:0|safe|lower }}">
+            <strong>{{ selected_data.aqi }}</strong>
+            <span>{{ selected_data.aqi|floatformat:0 }}</span>
+        </div>
+
+        <p class="timestamp">Last updated: {{ selected_data.timestamp }}</p>
+    </div>
+
+</section>
+
+<!-- 24-HOUR FORECAST GRID -->
+<section class="forecast-wrapper">
+
+    <span class="forecast-title">24-Hour AQI Forecast</span>
+
+    <div class="forecast-grid">
+        {% for f in forecast %}
+            <div class="forecast-card">
+                <div class="time">{{ f.time }}</div>
+                <div class="value">{{ f.aqi }}</div>
+                <div class="label {{ f.color }}">{{ f.label }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+</section>
+{% endif %}
+
+<!-- FOOTER -->
+{% include "home_sections/footer.html" %}
+
+
+<script>
+    const knownCities = {{ known_cities_json|safe }};
+    const suggestionBox = document.getElementById("suggestions");
+
+    function showSuggestions(text) {
+        suggestionBox.innerHTML = "";
+
+        if (text.length < 1) return;
+
+        const matches = knownCities.filter(c =>
+            c.toLowerCase().includes(text.toLowerCase())
+        );
+
+        matches.forEach(city => {
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            div.innerHTML = city;
+            div.onclick = () => {
+                window.location.href = `/forecasting/?city=${city}`;
+            };
+            suggestionBox.appendChild(div);
+        });
+    }
+</script>
+
+</body>
+</html>
