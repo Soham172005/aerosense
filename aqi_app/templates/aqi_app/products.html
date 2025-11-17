@@ -4,142 +4,297 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Product Recommender</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroSense – Smart Product Recommender</title>
     <link rel="stylesheet" href="{% static 'aqi_app/css/products.css' %}">
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 {% include 'home_sections/navbar.html' %}
 
-<div class="container">
-    <h1 class="title">Smart Product Recommender</h1>
-
-    <form method="GET">
-        <select name="city" class="city-select" onchange="this.form.submit()">
-            <option value="">Select a City</option>
-                {% for c in cities %}
-                <option value="{{ c.name }}">{{ c.name }}, {{ c.state }}</option>
-                            
-            {% endfor %}
-        </select>
-    </form>
-
-    {% if aqi_value %}
-        <div class="aqi-box">
-            Current AQI: <b>{{ aqi_value }}</b>
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        
+        <div class="hero-badge">
+            <span class="icon">🛒</span>
+            AI-Powered Recommendations
         </div>
 
-        <h2 class="subtitle">Recommended Products</h2>
+        <h1 class="hero-title">
+            Smart Product <span class="highlight">Recommender</span>
+        </h1>
 
-        <div class="products-grid">
-            {% for product in recommendations %}
-                <div class="product-card">
+        <p class="hero-desc">
+            Get personalized product recommendations based on your local air quality levels.
+            Protect yourself and your family with the right products at the right time.
+        </p>
 
-                    {% if product.image_url %}
-                        <img src="{{ product.image_url }}" class="product-img">
-                    {% endif %}
+        <!-- CITY SELECTOR FORM -->
+        <div class="city-selector">
+            <form method="GET" class="selector-form">
+                <label for="citySelect">Select Your Location:</label>
+                <select name="city" id="citySelect" onchange="this.form.submit()">
+                    <option value="">-- Choose a City --</option>
+                    {% for city in cities %}
+                        <option value="{{ city.name }}" 
+                                {% if selected_city and selected_city.name == city.name %}selected{% endif %}>
+                            {{ city.name }}{% if city.state %}, {{ city.state }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
 
-                    <h3>{{ product.name }}</h3>
+    </div>
+</section>
 
-                    <p class="desc">{{ product.description }}</p>
 
-                    <div class="effectiveness">
-                        Effectiveness: <b>{{ product.effectiveness }}%</b>
+<!-- AQI INFO CARD (shows only when city is selected) -->
+{% if selected_city and current_aqi %}
+<section class="aqi-info-section">
+    <div class="container">
+        
+        <div class="aqi-card {{ aqi_info.category_key }}">
+            <div class="aqi-header">
+                <div class="location-info">
+                    <span class="icon">📍</span>
+                    <h3>{{ selected_city.name }}</h3>
+                </div>
+                <div class="aqi-badge {{ aqi_info.category_key }}">
+                    {{ aqi_info.category }}
+                </div>
+            </div>
+
+            <div class="aqi-body">
+                <div class="aqi-value-display">
+                    <div class="aqi-number">{{ current_aqi }}</div>
+                    <div class="aqi-label">Current AQI</div>
+                </div>
+
+                <div class="aqi-details">
+                    <div class="detail-box">
+                        <strong>Air Quality Status:</strong>
+                        <p>{{ aqi_info.message }}</p>
                     </div>
 
-                    <div class="price">₹{{ product.price }}</div>
+                    <div class="detail-box recommendation">
+                        <strong>⚠️ Recommendations:</strong>
+                        <p>{{ aqi_info.recommendation }}</p>
+                    </div>
 
-                    {% if product.product_url %}
-                        <a href="{{ product.product_url }}" target="_blank" class="buy-btn">Buy Now</a>
+                    <div class="timestamp">
+                        Last updated: {{ aqi_info.timestamp|date:"M d, Y - g:i A" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+
+<!-- CATEGORY TABS -->
+{% if selected_city and recommended_products %}
+<section class="products-section">
+    <div class="container">
+
+        <h2 class="section-title">Recommended Products for You</h2>
+        <p class="section-desc">Based on current AQI level of {{ current_aqi }}</p>
+
+        <!-- TABS -->
+        <div class="category-tabs">
+            <button class="tab active" data-category="all">
+                All Products ({{ product_counts.all }})
+            </button>
+            <button class="tab" data-category="mask">
+                Masks ({{ product_counts.mask }})
+            </button>
+            <button class="tab" data-category="purifier">
+                Air Purifiers ({{ product_counts.purifier }})
+            </button>
+            <button class="tab" data-category="room_purifier">
+                Room Purifiers ({{ product_counts.room_purifier }})
+            </button>
+            <button class="tab" data-category="monitor">
+                Monitors ({{ product_counts.monitor }})
+            </button>
+            <button class="tab" data-category="car-filter">
+                Car Filters ({{ product_counts.car_filter }})
+            </button>
+            <button class="tab" data-category="plant">
+                Plants ({{ product_counts.plant }})
+            </button>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        <div class="products-grid" id="productsGrid">
+            
+            {% for product in recommended_products %}
+            <div class="product-card" data-type="{{ product.product_type }}">
+                
+                <!-- Product Image -->
+                <div class="product-image">
+                    {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="image-placeholder">
+                            {% if product.product_type == 'mask' %}😷
+                            {% elif product.product_type == 'purifier' %}🌬️
+                            {% elif product.product_type == 'room_purifier' %}💨
+                            {% elif product.product_type == 'monitor' %}📊
+                            {% elif product.product_type == 'car-filter' %}🚗
+                            {% elif product.product_type == 'plant' %}🌿
+                            {% endif %}
+                        </div>
                     {% endif %}
                 </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    
+                    <div class="product-type-badge">
+                        {{ product.get_product_type_display }}
+                    </div>
+
+                    <h3 class="product-name">{{ product.name }}</h3>
+
+                    <p class="product-description">
+                        {{ product.description|truncatechars:100 }}
+                    </p>
+
+                    <!-- Rating & Reviews -->
+                    <div class="product-meta">
+                        {% if product.rating > 0 %}
+                        <div class="rating">
+                            <span class="stars">⭐</span>
+                            <span class="rating-value">{{ product.rating }}</span>
+                            {% if product.reviews > 0 %}
+                                <span class="reviews-count">({{ product.reviews }})</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="effectiveness">
+                            <span class="effectiveness-label">Effectiveness:</span>
+                            <span class="effectiveness-value">{{ product.effectiveness }}%</span>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    {% if product.features %}
+                    <div class="product-features">
+                        {% for feature in product.features|slice:":3" %}
+                            <span class="feature-tag">{{ feature }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Price & Buy Button -->
+                    <div class="product-footer">
+                        <div class="price">
+                            ₹{{ product.price|floatformat:0 }}
+                        </div>
+
+                        {% if product.product_url %}
+                        <a href="{{ product.product_url }}" 
+                           target="_blank" 
+                           class="buy-btn">
+                            Buy Now →
+                        </a>
+                        {% else %}
+                        <a href="https://www.google.com/search?q={{ product.name|urlencode }}+buy+online+india" 
+                           target="_blank" 
+                           class="buy-btn">
+                            Search Online →
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
             {% endfor %}
+
         </div>
-    {% endif %}
-</div>
 
-<section class="hero">
-    <h1>Smart Product <span>Recommender</span></h1>
-    <p>Personalized product suggestions based on your local air quality.</p>
-</section>
-
-<section class="products-container">
-
-    <!-- Category Tabs -->
-    <div class="tabs">
-        <button class="tab active" data-category="all">All</button>
-        <button class="tab" data-category="purifier">Purifiers</button>
-        <button class="tab" data-category="mask">Masks</button>
-        <button class="tab" data-category="monitor">Monitors</button>
-        <button class="tab" data-category="car-filter">Car Filters</button>
-        <button class="tab" data-category="plant">Plants</button>
     </div>
-
-    <!-- Product Grid -->
-    <div id="productGrid" class="product-grid"></div>
-
 </section>
 
+{% elif selected_city and not current_aqi %}
+<!-- NO AQI DATA MESSAGE -->
+<section class="no-data-section">
+    <div class="container">
+        <div class="no-data-card">
+            <div class="icon">⚠️</div>
+            <h3>No Air Quality Data Available</h3>
+            <p>We don't have recent AQI readings for <strong>{{ selected_city.name }}</strong>.</p>
+            <p>Please select a different city or try again later.</p>
+        </div>
+    </div>
+</section>
+
+{% elif not selected_city %}
+<!-- NO CITY SELECTED MESSAGE -->
+<section class="no-selection-section">
+    <div class="container">
+        <div class="info-card">
+            <div class="icon">🏙️</div>
+            <h3>Select Your City</h3>
+            <p>Choose your location from the dropdown above to get personalized product recommendations based on current air quality levels.</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <div class="container">
+        
+        <h2 class="features-title">Why Use Our Recommender?</h2>
+
+        <div class="features-grid">
+            
+            <div class="feature-card">
+                <div class="feature-icon purple">🎯</div>
+                <div class="feature-text">
+                    <h4>AI-Powered Matching</h4>
+                    <p>Products automatically filtered based on your local AQI levels.</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon yellow">⚡</div>
+                <div class="feature-text">
+                    <h4>Real-Time Updates</h4>
+                    <p>Recommendations update as air quality changes throughout the day.</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon purple">🛡️</div>
+                <div class="feature-text">
+                    <h4>Safety First</h4>
+                    <p>Only products proven effective for your pollution level are shown.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- FOOTER -->
 {% include 'home_sections/footer.html' %}
 
-<!-- JavaScript to fetch products -->
-<script>
-    let allProducts = [];
 
-    async function loadProducts() {
-        try {
-            const response = await fetch("/products/");
-            allProducts = await response.json();
-            displayProducts(allProducts);
-        } catch (error) {
-            console.error("Error loading products:", error);
-        }
-    }
-
-    function displayProducts(list) {
-        const grid = document.getElementById("productGrid");
-        grid.innerHTML = "";
-
-        list.forEach(p => {
-            grid.innerHTML += `
-                <div class="product-card">
-                    <h3>${p.name}</h3>
-                    <p class="price">$${p.price}</p>
-                    <p class="desc">${p.description}</p>
-
-                    <div class="rating">
-                        ⭐ ${p.rating} (${p.reviews} reviews)
-                    </div>
-
-                    <div class="features">
-                        ${p.features.slice(0,3).map(f => `<span>${f}</span>`).join("")}
-                    </div>
-
-                    <button class="btn">Add to Cart</button>
-                </div>
-            `;
-        });
-    }
-
-    // CATEGORY FILTER
-    document.querySelectorAll(".tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-            document.querySelector(".tab.active").classList.remove("active");
-            tab.classList.add("active");
-
-            const category = tab.dataset.category;
-
-            if (category === "all") {
-                displayProducts(allProducts);
-            } else {
-                displayProducts(allProducts.filter(p => p.product_type === category));
-            }
-        });
-    });
-
-    loadProducts();
-</script>
+<!-- JAVASCRIPT FOR CATEGORY FILTERING -->
+<script src="{% static 'aqi_app/js/products.js' %}"></script>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from aqi_app.models import AQIReading, City
+from aqi_app.models import AQIReading, City, Product
 from django.shortcuts import render
 from django.db.models import OuterRef, Subquery, Max
 from aqi_app.models import AQIReading, Station
@@ -21,6 +21,11 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Product, City, AQIReading
 from .serializers import ProductSerializer
+from aqi_app.utils.product_recommender import (
+    get_recommendations, 
+    get_recommendation_message,
+    get_aqi_category
+)
 
 # ---------------- PRODUCT API ----------------
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -313,9 +318,72 @@ def trends_view(request):
 
 
 def products_page(request):
-    cities = City.objects.all().order_by("name")
-
-    context = {
-        "cities": cities,
+    """
+    Smart Product Recommender page.
+    Shows products based on selected city's AQI level.
+    """
+    
+    # Get all cities for dropdown (sorted alphabetically)
+    cities = City.objects.all().order_by('name')
+    
+    # Get selected city from query parameter
+    selected_city_name = request.GET.get('city')
+    selected_city = None
+    current_aqi = None
+    aqi_info = None
+    recommended_products = []
+    all_products = []
+    
+    if selected_city_name:
+        try:
+            # Get city object
+            selected_city = City.objects.get(name=selected_city_name)
+            
+            # Get latest AQI reading for this city
+            latest_reading = AQIReading.objects.filter(
+                city=selected_city
+            ).order_by('-timestamp').first()
+            
+            if latest_reading and latest_reading.aqi:
+                current_aqi = latest_reading.aqi
+                
+                # Get AQI category and recommendation message
+                aqi_info = get_recommendation_message(current_aqi)
+                aqi_info['value'] = current_aqi
+                aqi_info['category_key'] = get_aqi_category(current_aqi)
+                aqi_info['timestamp'] = latest_reading.timestamp
+                
+                # Get recommended products based on AQI
+                recommended_products = get_recommendations(
+                    aqi=current_aqi,
+                    max_results=50
+                )
+                
+        except City.DoesNotExist:
+            pass
+    
+    # Get all products for category filtering (even if no city selected)
+    all_products = Product.objects.all().order_by('-effectiveness', '-rating')
+    
+    # Count products by category
+    product_counts = {
+        'all': all_products.count(),
+        'mask': all_products.filter(product_type='mask').count(),
+        'purifier': all_products.filter(product_type='purifier').count(),
+        'room_purifier': all_products.filter(product_type='room_purifier').count(),
+        'monitor': all_products.filter(product_type='monitor').count(),
+        'car_filter': all_products.filter(product_type='car-filter').count(),  # ✅ Fixed
+        'plant': all_products.filter(product_type='plant').count(),
     }
+    
+    context = {
+        'cities': cities,
+        'selected_city': selected_city,
+        'current_aqi': current_aqi,
+        'aqi_info': aqi_info,
+        'recommended_products': recommended_products,
+        'all_products': all_products,
+        'product_counts': product_counts,
+    }
+    
     return render(request, 'aqi_app/products.html', context)

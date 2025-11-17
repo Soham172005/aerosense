@@ -1,0 +1,87 @@
+# ============================================
+# PYTHON
+# ============================================
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============================================
+# VIRTUAL ENVIRONMENT
+# ============================================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ============================================
+# DJANGO
+# ============================================
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# ============================================
+# SENSITIVE DATA
+# ============================================
+# IMPORTANT: Don't commit API keys!
+# If you already committed settings.py with keys, see note below
+*.env
+.env
+.env.local
+secrets.json
+
+# ============================================
+# IDE / EDITOR
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================
+# DJANGO MIGRATIONS (OPTIONAL)
+# ============================================
+# Uncomment if you want to ignore migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# ============================================
+# COVERAGE / TESTING
+# ============================================
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.pytest_cache/
+
+# ============================================
+# NODE (if using frontend tools)
+# ============================================
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ============================================
+# OS GENERATED
+# ============================================
+Thumbs.db
+.DS_Store
+desktop.ini

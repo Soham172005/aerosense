@@ -138,3 +138,8 @@ STATICFILES_DIRS = [
 TEMPLATES[0]["DIRS"] = [
     BASE_DIR / "aqi_app"/ "templates",
 ]
+
+SERPAPI_KEY = "f5d39bdc1b1908b93d74a84ab916429e9eb286116ce31b471957772dc68faadc"  # Replace with your actual key
+SERPAPI_ENGINE = "google_shopping"
+SERPAPI_COUNTRY = "in"  # India
+SERPAPI_LANGUAGE = "en"
